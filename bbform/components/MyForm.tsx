@@ -3,8 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Form,
   FormControl,
@@ -16,7 +18,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
-
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -27,6 +35,11 @@ const formSchema = z.object({
   address: z.string().min(5,{message:"Хаягаа оруулна уу"}).optional(),
   email: z.string().optional(),
   phone: z.string().optional(),
+  hasBankAccount: z.string().optional(),
+  card: z.string().optional(),
+  branch: z.string().optional(),
+  promoCode: z.string().optional(),
+  file: z.instanceof(FileList).nullable().optional(),
 })
 
 
@@ -34,7 +47,11 @@ export function MyForm() {
     const [show, setShow] = useState(false)
     const [text, setText] = useState(false)
     const [text18, setText18] = useState(false)
-  const form = useForm({
+
+//   const form = useForm<z.infer<typeof formSchema>>({
+//     resolver: zodResolver(formSchema),
+//   });
+const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
@@ -42,11 +59,20 @@ export function MyForm() {
       address: "",
       email: "",
       phone: "",
+      hasBankAccount: "",
+      branch: "",
+      card: "",
+      promoCode: "",
+      file: null,
+
     },
   });
-  const onSubmit = async (data: {username: string, date: Date, address: string, email: string, phone: string})=> {
-      console.log(data)
-  }
+//   const onSubmit = async (data: {username: string, date: Date, address: string, email: string, phone: string, hasBankAccount: string, card: string})=> {
+//       console.log(data)
+//   }
+const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log(data);
+  };
   const handleDate = (date: Date) => {
     setShow(false);
   setText(false);
@@ -74,12 +100,12 @@ export function MyForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Овог, Нэр / Full name </FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Бүтэн нэр" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                Овог нэрээ оруулна уу
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -90,7 +116,7 @@ export function MyForm() {
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Төрсөн он сар өдөр</FormLabel>
               <FormControl>
               <Input
   type="date"
@@ -106,7 +132,7 @@ export function MyForm() {
 />
               </FormControl>
               <FormDescription>
-                Enter birth date
+               Төрсөн он сар өдрөө оруулна уу
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -119,13 +145,11 @@ export function MyForm() {
             name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Address</FormLabel>
+                <FormLabel>Гэрийн хаяг </FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Хаяг" {...field} />
                 </FormControl>
-                <FormDescription>
-                  Address
-                </FormDescription>
+               
                 <FormMessage />
               </FormItem>
             )}
@@ -135,12 +159,12 @@ export function MyForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Цахим Хаяг / Email address</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" type="email" {...field} />
+                  <Input placeholder="example@mail.com" type="email" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Email
+                Цахим Хаягаа оруулна уу
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -151,17 +175,262 @@ export function MyForm() {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel>Гар Утас</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" type="tel" {...field}  pattern="[0-9]{8}"/>
+                  <Input placeholder="" type="tel" {...field}  pattern="[0-9]{8}"/>
                 </FormControl>
                 <FormDescription>
-                  Phone
+                  Гар утасны дугаараа оруулна уу
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+      <FormField
+  control={form.control}
+  name="hasBankAccount"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Та богд банкны хадгаламжийн данстай юу? </FormLabel>
+      <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <FormControl>
+          <SelectTrigger>
+            <SelectValue defaultValue="No" placeholder="Данс байгаа эсэх" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          <SelectItem value="Yes">Тийм</SelectItem>
+          <SelectItem value="No">Үгүй</SelectItem>
+        </SelectContent>
+      </Select>
+      <FormDescription>
+        You can manage email addresses in your{" "}
+        <Link href="/examples/forms">email settings</Link>.
+      </FormDescription>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+{/* Radio Group */}
+<FormField
+  control={form.control}
+  name="card"
+  render={({ field }) => {
+    // Use `form.watch` to track hasBankAccount value
+    const hasBankAccount = form.watch("hasBankAccount", "No");
+
+    return (
+      <FormItem className="space-y-3">
+        <FormLabel>Картын мэдээлэл </FormLabel>
+        <FormControl>
+          <div className="overflow-x-auto flex space-x-4 w-full">
+            <RadioGroup
+              value={field.value} // Bind value to form state
+              onValueChange={field.onChange}
+              className="flex flex-nowrap space-x-4" // Horizontal layout for items
+            >
+              {hasBankAccount === "No" ? (
+                <>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Miya-Moonlight Archer" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/miyamoon.jpg"
+                        width={400}
+                        height={200}
+                        alt="Miya-Moonlight Archer"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Nana-Clockwork Maid" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/nanamaid.jpg"
+                        width={400}
+                        height={200}
+                        alt="Nana-Clockwork Maid"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Gusion-Holy Blade" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/gusionholyblade.jpg"
+                        width={400}
+                        height={200}
+                        alt="Gusion-Holy Blade"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                </>
+              ) : (
+                <>
+                  {/* All items */}
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Miya-Moonlight Archer" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/miyamoon.jpg"
+                        width={400}
+                        height={200}
+                        alt="Miya-Moonlight Archer"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Nana-Clockwork Maid" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/nanamaid.jpg"
+                        width={400}
+                        height={200}
+                        alt="Nana-Clockwork Maid"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Gusion-Holy Blade" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/gusionholyblade.jpg"
+                        width={400}
+                        height={200}
+                        alt="Gusion-Holy Blade"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Gusion-Soul Revelation" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/gusionsoul.jpg"
+                        width={400}
+                        height={200}
+                        alt="Gusion-Soul Revelation"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Gusion-Soul Revelation" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/nanaparty.jpg"
+                        width={400}
+                        height={200}
+                        alt="Nana-Slumber Party"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex-shrink-0 w-[400px]">
+                    <FormControl>
+                      <RadioGroupItem value="Miya-Doom Catalyst" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      <Image
+                        src="/assets/miyadoom.jpg"
+                        width={400}
+                        height={200}
+                        alt="Gusion-Soul Revelation"
+                      />
+                    </FormLabel>
+                  </FormItem>
+                </>
+              )}
+            </RadioGroup>
+          </div>
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    );
+  }}
+/>
+
+
+<FormField
+            control={form.control}
+            name="promoCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Промо код</FormLabel>
+                <FormControl>
+                  <Input placeholder="Жишээ нь: 1111" type="numeric" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Промо Кодоо оруулна уу
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+      <FormField
+  control={form.control}
+  name="branch"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Захиалгын мэдээлэл </FormLabel>
+      <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <FormControl>
+          <SelectTrigger>
+            <SelectValue defaultValue="No" placeholder="Салбар сонгох" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          <SelectItem value="Yes">Тийм</SelectItem>
+          <SelectItem value="No">Үгүй</SelectItem>
+        </SelectContent>
+      </Select>
+      <FormDescription>
+        You can manage email addresses in your{" "}
+        <Link href="/examples/forms">email settings</Link>.
+      </FormDescription>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+        <FormField
+  control={form.control}
+  name="file"
+  render={({ field }) => {
+    return (
+      <FormItem>
+        <FormLabel>Бичиг баримт</FormLabel>
+        <FormControl>
+          <Input
+            type="file"
+            placeholder="Файл сонгох"
+            onChange={(e) => {
+              field.onChange(e.target.files); // Update field value with selected files
+            }}
+            ref={field.ref} // Pass the ref to the input
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    );
+  }}
+/>
+
           <Button type="submit">Submit</Button>
             </>
           
