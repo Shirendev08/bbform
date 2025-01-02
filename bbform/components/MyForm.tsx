@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
     Select,
     SelectContent,
@@ -25,7 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import branches from './../lib/branches';
+import { branches } from "@/lib/service"
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -42,15 +42,47 @@ const formSchema = z.object({
   promoCode: z.string().optional(),
   file: z.instanceof(FileList).nullable().optional(),
 })
-
+interface Branch {
+  bus_hours: string;
+  address: string;
+  phone: string;
+  img_url: string;
+  loc_code: string;
+  latitude: number;
+  loc_type: string;
+  loc_name: string;
+  fax: string;
+  email: string;
+  longitude: number;
+}
 
 export function MyForm() {
     const [show, setShow] = useState(false)
     const [text, setText] = useState(false)
     const [text18, setText18] = useState(false)
-//   const form = useForm<z.infer<typeof formSchema>>({
-//     resolver: zodResolver(formSchema),
-//   });
+    const [branchData, setBranchData] = useState<Branch[]>([]); // Use Branch[] type
+      const [error, setError] = useState<string | null>(null);
+    
+      useEffect(() => {
+        const fetchBranches = async () => {
+          try {
+            const data: Branch[] = await branches(); // Expect data of type Branch[]
+            console.log("Fetched Branch Data:", data);
+    
+            if (data.length > 0) {
+              setBranchData(data);
+            } else {
+              setError("No branches available");
+            }
+          } catch (err) {
+            setError("Failed to fetch branches");
+            console.error(err);
+          }
+        };
+    
+        fetchBranches();
+      }, []);
+
 const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,9 +100,6 @@ const form = useForm<z.infer<typeof formSchema>>({
     },
   });
 
-//   const onSubmit = async (data: {username: string, date: Date, address: string, email: string, phone: string, hasBankAccount: string, card: string})=> {
-//       console.log(data)
-//   }
 const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
   };
@@ -93,9 +122,10 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
       }
    
   }
+
   return (
     <div className="w-[400px] ml-auto mr-auto mt-auto mb-auto border p-10 border-black rounded-md">
-
+    
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
@@ -303,11 +333,20 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
           </SelectTrigger>
         </FormControl>
         <SelectContent>
-          {branches.map((branch) => (
+          {/* {branches.map((branch) => (
             <SelectItem key={branch.id} value={branch.title}>
               {branch.title}
             </SelectItem>
-          ))}
+          ))} */}
+          {branchData.map((branch) => (
+          <SelectItem key={branch.loc_code} value={branch.loc_name}>
+            <span className="font-bold">
+              {branch.loc_name}
+              </span>
+              {branch.address}
+              
+          </SelectItem>
+        ))}
         </SelectContent>
       </Select>
       <FormMessage />
