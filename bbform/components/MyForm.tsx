@@ -93,6 +93,8 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
    
   }
   return (
+    <div className="w-[400px] ml-auto mr-auto mt-auto mb-auto border p-10 border-black rounded-md">
+
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
@@ -451,5 +453,6 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
      
       </form>
     </Form>
+    </div>
   )
 }
