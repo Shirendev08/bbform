@@ -1,5 +1,5 @@
 "use client"
-
+import { useQRCode } from 'next-qrcode';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -59,6 +59,7 @@ interface Branch {
 }
 
 export function MyForm() {
+  const { SVG } = useQRCode();
   const [isOtpDisabled, setIsOtpDisabled] = useState(true);
     const [show, setShow] = useState(false)
     const [text, setText] = useState(false)
@@ -451,8 +452,18 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
       </FormItem>
     );
   }}
-/>
-
+/>  
+<SVG
+      text={''}
+      options={{
+        margin: 2,
+        width: 200,
+        color: {
+          dark: '#010599FF',
+          light: '#FFBF60FF',
+        },
+      }}
+    />
           <Button type="submit">Submit</Button>
             </>
           
