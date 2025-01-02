@@ -25,6 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import branches from './../lib/branches';
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -35,9 +36,9 @@ const formSchema = z.object({
   address: z.string().min(5,{message:"Хаягаа оруулна уу"}).optional(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  hasBankAccount: z.string().optional(),
-  card: z.string().optional(),
-  branch: z.string().optional(),
+  hasBankAccount: z.string().min(1,{message: "Хадгаламж байгаа эсэхийг сонгоно уу"}).optional(), 
+  card: z.string().min(5,{message:"Картаа сонгоно уу"}).optional(),
+  branch: z.string().min(5,{message:"Салбараа оруулна уу"}).optional(),
   promoCode: z.string().optional(),
   file: z.instanceof(FileList).nullable().optional(),
 })
@@ -47,7 +48,6 @@ export function MyForm() {
     const [show, setShow] = useState(false)
     const [text, setText] = useState(false)
     const [text18, setText18] = useState(false)
-
 //   const form = useForm<z.infer<typeof formSchema>>({
 //     resolver: zodResolver(formSchema),
 //   });
@@ -67,6 +67,7 @@ const form = useForm<z.infer<typeof formSchema>>({
 
     },
   });
+
 //   const onSubmit = async (data: {username: string, date: Date, address: string, email: string, phone: string, hasBankAccount: string, card: string})=> {
 //       console.log(data)
 //   }
@@ -104,7 +105,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
             <FormItem>
               <FormLabel>Овог, Нэр / Full name </FormLabel>
               <FormControl>
-                <Input placeholder="Бүтэн нэр" {...field} />
+                <Input placeholder="Бүтэн нэр" {...field} required />
               </FormControl>
               <FormDescription>
                 Овог нэрээ оруулна уу
@@ -149,7 +150,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               <FormItem>
                 <FormLabel>Гэрийн хаяг </FormLabel>
                 <FormControl>
-                  <Input placeholder="Хаяг" {...field} />
+                  <Input placeholder="Хаяг" {...field} required />
                 </FormControl>
                
                 <FormMessage />
@@ -163,7 +164,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               <FormItem>
                 <FormLabel>Цахим Хаяг / Email address</FormLabel>
                 <FormControl>
-                  <Input placeholder="example@mail.com" type="email" {...field} />
+                  <Input placeholder="example@mail.com" type="email" {...field}  required/>
                 </FormControl>
                 <FormDescription>
                 Цахим Хаягаа оруулна уу
@@ -179,7 +180,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               <FormItem>
                 <FormLabel>Гар Утас</FormLabel>
                 <FormControl>
-                  <Input placeholder="" type="tel" {...field}  pattern="[0-9]{8}"/>
+                  <Input placeholder="" type="tel" {...field}  pattern="[0-9]{8}" required/>
                 </FormControl>
                 <FormDescription>
                   Гар утасны дугаараа оруулна уу
@@ -194,7 +195,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
   render={({ field }) => (
     <FormItem>
       <FormLabel>Та богд банкны хадгаламжийн данстай юу? </FormLabel>
-      <Select onValueChange={field.onChange} defaultValue={field.value}>
+      <Select onValueChange={field.onChange} defaultValue={field.value} required>
         <FormControl>
           <SelectTrigger>
             <SelectValue defaultValue="No" placeholder="Данс байгаа эсэх" />
@@ -222,141 +223,47 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
     // Use `form.watch` to track hasBankAccount value
     const hasBankAccount = form.watch("hasBankAccount", "No");
 
+    // Dynamically set cards based on `hasBankAccount`
+    const cards = hasBankAccount === "No"
+      ? [
+          { value: "Gusion - Holy Blade", src: "/assets/gusionholyblade.jpg" },
+          { value: "Miya - Moonlight Archer", src: "/assets/miyamoon.jpg" },
+          { value: "Nana - Clockwork Maid", src: "/assets/nanamaid.jpg" },
+        ]
+      : [
+          { value: "Gusion - Holy Blade", src: "/assets/gusionholyblade.jpg" },
+          { value: "Miya - Moonlight Archer", src: "/assets/miyamoon.jpg" },
+          { value: "Nana - Clockwork Maid", src: "/assets/nanamaid.jpg" },
+          { value: "Miya - Doom Catalyst / Limited №1 загвар /", src: "/assets/miyadoom.jpg" },
+          { value: "Gusion - Soul Revelation / Limited №1 загвар /", src: "/assets/gusionsoul.jpg" },
+          { value: "Nana - Slumber Party / Limited №1 загвар /", src: "/assets/nanaparty.jpg" },
+        ];
+
     return (
       <FormItem className="space-y-3">
-        <FormLabel>Картын мэдээлэл </FormLabel>
+        <FormLabel>Картын мэдээлэл</FormLabel>
         <FormControl>
-          <div className="overflow-x-auto flex space-x-4 w-full">
+          <div className="overflow-x-auto flex space-x-2">
             <RadioGroup
-              value={field.value} // Bind value to form state
+              value={field.value}
               onValueChange={field.onChange}
-              className="flex flex-nowrap space-x-4" // Horizontal layout for items
+              className="flex flex-nowrap space-x-2"
             >
-              {hasBankAccount === "No" ? (
-                <>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Miya-Moonlight Archer" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/miyamoon.jpg"
-                        width={400}
-                        height={200}
-                        alt="Miya-Moonlight Archer"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Nana-Clockwork Maid" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/nanamaid.jpg"
-                        width={400}
-                        height={200}
-                        alt="Nana-Clockwork Maid"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Gusion-Holy Blade" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/gusionholyblade.jpg"
-                        width={400}
-                        height={200}
-                        alt="Gusion-Holy Blade"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                </>
-              ) : (
-                <>
-                  {/* All items */}
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Miya-Moonlight Archer" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/miyamoon.jpg"
-                        width={400}
-                        height={200}
-                        alt="Miya-Moonlight Archer"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Nana-Clockwork Maid" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/nanamaid.jpg"
-                        width={400}
-                        height={200}
-                        alt="Nana-Clockwork Maid"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Gusion-Holy Blade" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/gusionholyblade.jpg"
-                        width={400}
-                        height={200}
-                        alt="Gusion-Holy Blade"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Gusion-Soul Revelation" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/gusionsoul.jpg"
-                        width={400}
-                        height={200}
-                        alt="Gusion-Soul Revelation"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Gusion-Soul Revelation" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/nanaparty.jpg"
-                        width={400}
-                        height={200}
-                        alt="Nana-Slumber Party"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex-shrink-0 w-[400px]">
-                    <FormControl>
-                      <RadioGroupItem value="Miya-Doom Catalyst" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/assets/miyadoom.jpg"
-                        width={400}
-                        height={200}
-                        alt="Gusion-Soul Revelation"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                </>
-              )}
+              {cards.map((card) => (
+                <FormItem key={card.value} className="flex-shrink-0 w-[250]">
+                  <FormControl>
+                    <RadioGroupItem value={card.value} />
+                  </FormControl>
+                  <FormLabel className="font-normal">
+                    <Image
+                      src={card.src}
+                      width={250}
+                      height={100}
+                      alt={card.value}
+                    />
+                  </FormLabel>
+                </FormItem>
+              ))}
             </RadioGroup>
           </div>
         </FormControl>
@@ -383,28 +290,28 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               </FormItem>
             )}
           />
-      <FormField
+    <FormField
   control={form.control}
   name="branch"
   render={({ field }) => (
     <FormItem>
-      <FormLabel>Захиалгын мэдээлэл </FormLabel>
-      <Select onValueChange={field.onChange} defaultValue={field.value}>
+      <FormLabel>Захиалгын мэдээлэл</FormLabel>
+      <Select onValueChange={field.onChange} defaultValue={field.value} required>
         <FormControl>
           <SelectTrigger>
-            <SelectValue defaultValue="No" placeholder="Салбар сонгох" />
+            <SelectValue placeholder="Салбар сонгох"/>
           </SelectTrigger>
         </FormControl>
         <SelectContent>
-          <SelectItem value="Yes">Тийм</SelectItem>
-          <SelectItem value="No">Үгүй</SelectItem>
+          {branches.map((branch) => (
+            <SelectItem key={branch.id} value={branch.title}>
+              {branch.title}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
-      <FormDescription>
-        You can manage email addresses in your{" "}
-        <Link href="/examples/forms">email settings</Link>.
-      </FormDescription>
       <FormMessage />
+   
     </FormItem>
   )}
 />
@@ -425,6 +332,7 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               field.onChange(e.target.files); // Update field value with selected files
             }}
             ref={field.ref} // Pass the ref to the input
+            required
           />
         </FormControl>
         <FormMessage />
