@@ -28,3 +28,26 @@ export async function branches() {
     throw err; // Re-throw after logging the error
   }
 }
+
+export async function sendSms(regNo:string, phoneNumber: string) {
+  try {
+    const res = await fetch('http://middleware.bogd.mn:9191/api-gateway/info/sms/sendOtp/', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ regNo, phoneNumber }),
+    });
+    console.log(regNo,phoneNumber)
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Server error response:", errorData);
+      throw new Error(errorData.message || "SMS sending failed.");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error in sendSms:", error);
+    throw error;
+  }
+}
+

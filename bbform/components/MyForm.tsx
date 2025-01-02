@@ -25,7 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import { branches } from "@/lib/service"
+import { branches, sendSms } from "@/lib/service"
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -35,7 +35,9 @@ const formSchema = z.object({
   }),
   address: z.string().min(5,{message:"Хаягаа оруулна уу"}).optional(),
   email: z.string().optional(),
-  phone: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  regNo: z.string().optional(),
+  otpCode: z.string().optional(),
   hasBankAccount: z.string().min(1,{message: "Хадгаламж байгаа эсэхийг сонгоно уу"}).optional(), 
   card: z.string().min(5,{message:"Картаа сонгоно уу"}).optional(),
   branch: z.string().min(5,{message:"Салбараа оруулна уу"}).optional(),
@@ -45,7 +47,7 @@ const formSchema = z.object({
 interface Branch {
   bus_hours: string;
   address: string;
-  phone: string;
+  phoneNumber: string;
   img_url: string;
   loc_code: string;
   latitude: number;
@@ -57,17 +59,18 @@ interface Branch {
 }
 
 export function MyForm() {
+  const [isOtpDisabled, setIsOtpDisabled] = useState(true);
     const [show, setShow] = useState(false)
     const [text, setText] = useState(false)
     const [text18, setText18] = useState(false)
     const [branchData, setBranchData] = useState<Branch[]>([]); // Use Branch[] type
-      const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     
       useEffect(() => {
         const fetchBranches = async () => {
           try {
             const data: Branch[] = await branches(); // Expect data of type Branch[]
-            console.log("Fetched Branch Data:", data);
+            // console.log("Fetched Branch Data:", data);
     
             if (data.length > 0) {
               setBranchData(data);
@@ -90,7 +93,9 @@ const form = useForm<z.infer<typeof formSchema>>({
       date: new Date(),
       address: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
+      regNo: "",
+      otpCode: "",
       hasBankAccount: "",
       branch: "",
       card: "",
@@ -203,22 +208,95 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Гар Утас</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="tel" {...field}  pattern="[0-9]{8}" required/>
-                </FormControl>
-                <FormDescription>
-                  Гар утасны дугаараа оруулна уу
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div>
+  <FormField
+    control={form.control}
+    name="phoneNumber"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Гар Утас</FormLabel>
+        <FormControl>
+          <Input
+            placeholder=""
+            type="tel"
+            {...field}
+            pattern="[0-9]{8}"
+            required
           />
+        </FormControl>
+        <FormDescription>Гар утасны дугаараа оруулна уу</FormDescription>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+  <FormField
+    control={form.control}
+    name="regNo"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Регистрийн дугаар</FormLabel>
+        <FormControl>
+          <Input
+            placeholder=""
+            type="text"
+            {...field}
+            pattern="^[А-Яа-я]{2}[0-9]{8}$"
+            required
+          />
+        </FormControl>
+        <FormDescription>Регистрийн дугаараа оруулна уу</FormDescription>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+  <Button
+    onClick={async () => {
+      const values = form.getValues();
+      const { regNo, phoneNumber } = values;
+      console.log("reg", regNo, phoneNumber)
+      if (!regNo || !phoneNumber) {
+        alert("Please fill in both regDug and phone.");
+        return;
+      }
+
+      try {
+        const response = await sendSms(regNo, phoneNumber);
+        console.log(response);
+  
+        if (response.success) {
+          setIsOtpDisabled(false); // Enable OTP field if SMS is sent successfully
+        }
+        
+      } catch (error) {
+        
+        console.log(error)
+      }
+    }}
+  >
+    Send
+  </Button>
+</div>
+<FormField
+    control={form.control}
+    name="otpCode"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>OTP code</FormLabel>
+        <FormControl>
+          <Input
+            placeholder=""
+            type="text"
+            {...field}
+            pattern="^[А-Яа-я]{2}[0-9]{8}$"
+            required
+            disabled={isOtpDisabled}
+          />
+        </FormControl>
+        <FormDescription>OTP код оруулна уу</FormDescription>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
       <FormField
   control={form.control}
   name="hasBankAccount"
@@ -333,20 +411,15 @@ const onSubmit = (data: z.infer<typeof formSchema>) => {
           </SelectTrigger>
         </FormControl>
         <SelectContent>
-          {/* {branches.map((branch) => (
-            <SelectItem key={branch.id} value={branch.title}>
-              {branch.title}
-            </SelectItem>
-          ))} */}
-          {branchData.map((branch) => (
-          <SelectItem key={branch.loc_code} value={branch.loc_name}>
-            <span className="font-bold">
-              {branch.loc_name}
-              </span>
-              {branch.address}
-              
-          </SelectItem>
-        ))}
+        
+        {branchData.map((branch, index) => (
+  <SelectItem 
+    key={`${branch.loc_code}-${index}`} // Combine loc_code and index for uniqueness
+    value={branch.loc_name}
+  >
+    {branch.loc_name}
+  </SelectItem>
+))}
         </SelectContent>
       </Select>
       <FormMessage />
