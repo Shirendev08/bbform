@@ -51,3 +51,50 @@ export async function sendSms(regNo:string, phoneNumber: string) {
   }
 }
 
+
+export async function otpVerification(otpCode:string, phoneNumber: string) {
+  try {
+    const res = await fetch('http://middleware.bogd.mn:9191/api-gateway/info/signup/otp/confirmation', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ otpCode, phoneNumber }),
+    }); 
+    console.log(otpCode,phoneNumber)
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Server error response:", errorData);
+      throw new Error(errorData.message || "SMS sending failed.");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error in sendSms:", error);
+    throw error;
+  }
+}
+
+
+
+export async function qr() {
+  try {
+    const res = await fetch('http://middleware.bogd.mn:9191/api-gateway/info/signup/q_pay/qr', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+
+    }); 
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Server error response:", errorData);
+      throw new Error(errorData.message || "qr failed.");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error in sendSms:", error);
+    throw error;
+  }
+}
+

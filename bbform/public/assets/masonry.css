@@ -1,0 +1,175 @@
+.arch-slider {
+    margin: 0;
+    padding: 30px 0;
+    background: black;
+}
+
+
+.arc-images {
+    position: relative
+}
+
+.arc-images:before {
+    content: " ";
+    -webkit-transition: opacity .5s ease;
+    transition: opacity .5s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 0;
+    z-index: 1
+}
+
+a.arc-link:hover .arc-images:before {
+    background: rgba(8,8,8,.75);
+    background: rgba(51,51,51,0.6) !important
+}
+
+.architecturalmillwork-lyt .slick-lightbox-close {
+    color: rgba(0,110,158,1) !important;
+    font-size: 26px !important;
+    width: 38px !important;
+    HEIGHT: 44px !important;
+    margin-top: 30px;
+    margin-right: 80px;
+    right: 0 !important;
+    top: 2px !important
+}
+
+.architecturalmillwork-lyt .slick-lightbox-close:before {
+    font-family: progallery-svg-font-icons !important;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1 !important;
+    font-weight: 400;
+    font-style: normal;
+    speak: none;
+    text-decoration: inherit;
+    text-transform: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\F10A" !important;
+    font-size: inherit;
+    color: rgba(0,0,0,1) !important
+}
+
+.arch-slider .slick-arrow {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    margin-top: -55px;
+    z-index: 111;
+    padding: 20px 38.5px;
+    cursor: pointer
+}
+
+.arch-slider .slick-arrow.next {
+    right: 0
+}
+
+.arch-slider .slick-arrow svg {
+    -webkit-filter: drop-shadow(0 1px .15px #b2b2b2);
+    filter: drop-shadow(0 1px .15px #b2b2b2);
+    display: inline-block
+}
+
+.slideshow-arrow {
+    fill: #e8e8e8
+}
+
+.arch-slider {
+    margin: 0;
+    padding: 30px 0;
+    background: black;
+}
+
+.arc-images {
+    position: relative
+}
+
+.arc-images:before {
+    content: " ";
+    -webkit-transition: opacity .5s ease;
+    transition: opacity .5s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 0;
+    z-index: 1
+}
+
+a.arc-link:hover .arc-images:before {
+    background: rgba(8,8,8,.75);
+    background: rgba(51,51,51,0.6) !important
+}
+
+
+.architecturalmillwork-lyt .slick-lightbox-inner {
+    background-color: rgba(232,232,232,1) !important;
+    z-index: 1111
+}
+
+.architecturalmillwork-lyt .slick-lightbox-inner .slick-arrow {
+    z-index: 111;
+    width: 100px;
+    height: 100px;
+    background-image: url(//cdn2.hubspot.net/hubfs/4795157/Idxcorporation_December2018/Images/arrow.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 27px;
+    margin-top: -50px
+}
+
+.architecturalmillwork-lyt .slick-lightbox-inner .slick-arrow:before {
+    display: none
+}
+
+.architecturalmillwork-lyt .slick-lightbox-inner .slick-prev {
+    left: 0
+}
+
+.architecturalmillwork-lyt .slick-lightbox-inner .slick-next {
+    right: 0;
+    transform: rotate(180deg)
+}
+
+.architecturalmillwork-lyt .slick-lightbox-close {
+    color: rgba(0,110,158,1) !important;
+    font-size: 26px !important;
+    width: 38px !important;
+    HEIGHT: 44px !important;
+    margin-top: 30px;
+    margin-right: 80px;
+    right: 0 !important;
+    top: 2px !important
+}
+
+.architecturalmillwork-lyt .slick-lightbox-close:before {
+    font-family: progallery-svg-font-icons !important;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1 !important;
+    font-weight: 400;
+    font-style: normal;
+    speak: none;
+    text-decoration: inherit;
+    text-transform: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\F10A" !important;
+    font-size: inherit;
+    color: rgba(0,0,0,1) !important
+}
