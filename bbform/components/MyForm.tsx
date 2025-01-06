@@ -134,7 +134,6 @@ const form = useForm({
     // },  
   });
   const fileRef = form.register("file");
-  
 const onSubmit = async (data: any) => {
   const formData = new FormData();
 
@@ -142,7 +141,7 @@ const onSubmit = async (data: any) => {
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
       const fieldValue = data[key];
-      
+
       // Check if the field is a File object or an array of files
       if (fieldValue instanceof File) {
         // If it's a single file, append it to FormData

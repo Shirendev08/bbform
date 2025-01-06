@@ -13,18 +13,7 @@ import MarqueeSlider from "@/components/MarqueeSlider";
 import EventMarquee from "@/components/EventMarquee";
 
 export default function Home() {
-  const images = [
-    { src: 'images/events/1.jpg', alt: 'Event 1' },
-    { src: 'images/events/2.jpg', alt: 'Event 2' },
-    { src: 'images/events/3.jpg', alt: 'Event 3' },
-    { src: 'images/events/4.jpg', alt: 'Event 4' },
-    { src: 'images/events/5.jpg', alt: 'Event 5' },
-    { src: 'images/events/6.jpg', alt: 'Event 6' },
-    { src: 'images/events/7.jpg', alt: 'Event 7' },
-    { src: 'images/events/8.jpg', alt: 'Event 8' },
-    { src: 'images/events/9.jpg', alt: 'Event 9' },
-    { src: 'images/events/10.jpg', alt: 'Event 10' },
-  ];
+
   return (
    
    <div className="font-golos max-w-100vw overflow-x-hidden">
@@ -37,17 +26,18 @@ export default function Home() {
     <div className="container mx-auto px-6 lg:px-12 relative">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="mx-auto lg:mx-0 order-1 lg:order-0">
-          <img src="assets/logo.svg" alt="top logo" className="mt-12 lg:mt-32 mb-[-330px]" />
+          <img src="assets/logo.svg" alt="top logo" className="lg:mt-32 mb-[-360px]" />
           {/* <img src="images/top-logos.svg" alt="top logo" className="mt-12 lg:mt-32 mb-14" /> */}
           <div className="inline-block relative">
             {/* <img src="images/compass.svg" alt="compass" className="max-w-full" /> */}
-            <p className="text-7xl text-white font-bold">Mobile Legends Card</p>
+            <p className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-white font-bold">
+  Mobile Legends Bang Bang card
+</p>
             {/* <img src="images/a.svg" alt="a" className="absolute -top-4 right-1/4 compass-rotate" /> */}
           </div>
           <div className="font-golos max-w-sm text-white font-medium py-6">
-            Залуус өөрсдийн тодорхойлсон зорилгынхоо төлөө хөдөлмөрлөж байгаа
-            энэ үед өдөр тутмын амьдралд нь, боловсролд нь, хүрээлэлд нь хөтөч
-            болох <span className="font-semibold">Compass Community Card</span>
+          Mobile legends Баатруудын өнгө төрх хэв маягийг агуулсан загвартай картаа захиалан урамшууллын DIAMOND , олон төрлийн тусгай гэнэтийн бэлгүүдийн эзэн болоорой.
+         
           </div>
           <div className="my-16 inline-block">
             <a href="#cards">
