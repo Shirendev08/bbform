@@ -1,4 +1,7 @@
 "use server"
+
+import { z } from "zod";
+
 export async function branches() {
   try {
     const res = await fetch("http://192.168.10.177:1987/internalnes/main/info/branches", {
@@ -97,4 +100,186 @@ export async function qr() {
     throw error;
   }
 }
+
+export async function cardData() {
+  try {
+    const res = await fetch('http://middleware.bogd.mn:9191/api-gateway/info/signup/products', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+
+    }); 
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Server error response:", errorData);
+      throw new Error(errorData.message || "qr failed.");
+    }
+
+    const data = await res.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error in sendSms:", error);
+    throw error;
+  }
+}
+
+function calculateAge(birthdate: Date): number {
+  const today = new Date();
+  const birthYear = birthdate.getFullYear();
+  const birthMonth = birthdate.getMonth();
+  const birthDay = birthdate.getDate();
+
+  let age = today.getFullYear() - birthYear;
+
+  // Adjust if the birthday hasn't occurred yet this year
+  if (
+    today.getMonth() < birthMonth ||
+    (today.getMonth() === birthMonth && today.getDate() < birthDay)
+  ) {
+    age--;
+  }
+
+  return age;
+}
+// export async function sendFormData(data: FormData) {
+//   try {
+//     console.log("sendFormData.data:");
+
+//     const entries = Array.from(data.entries());
+//     for (const [key, value] of entries) {
+//         console.log(`  ${key}:`, value);
+//       }
+
+//     const formData = new FormData();
+
+//     // Map the form data fields
+//     const fieldMappings: { key: string; value: string | boolean | number }[] = [
+//       { key: "fullName", value: data.get("username") },
+//       { key: "RegNo", value: data.get("regNo") },
+//       { key: "customerAge", value: calculateAge(new Date(data.get("date"))) }, // Assuming a helper function
+//       { key: "customerAddress", value: data.get("address") },
+//       { key: "countyCode", value: "496" }, // Static value
+//       { key: "mobileNumber", value: data.get("phoneNumber") },
+//       { key: "emailAddress", value: data.get("email") },
+//       { key: "hasAccBogd", value: data.get("hasBankAccount") ? 'YES': 'NO' },
+//       { key: "promoCode", value: data.get("promoCode") ?? "123" },
+//       { key: "productCode", value: data.get("productCode") }, 
+//       { key: "branchCode", value: data.get("branch") },
+//       { key: "paymentDescription", value: data.get("verification") || "description" },
+//     ];
+
+//     // Append text fields to FormData
+//     fieldMappings.forEach(({ key, value }) => {
+//       formData.append(key, String(value)); // Convert all values to strings
+//     });
+
+//     // Append files to FormData
+//     const file = data.get("file");
+
+//     if (file) {
+//       if (Array.isArray(file)) {
+//         file.forEach((f: File) => {
+//           formData.append("file", f);
+//         });
+//       } else {
+//         formData.append("file", file);
+//       }
+//     }
+
+//     console.log("formData", formData);
+
+//     // Send the POST request
+//     const res = await fetch(
+//       "http://192.168.44.178:8085/info/signup/save/",
+//       {
+//         method: "POST",
+//         // headers: {
+//         //   "Content-Type": "multipart/form-data"
+//         // },
+//         body: formData,
+//       }
+//     );
+
+//     if (!res.ok) {
+//       throw new Error(`HTTP error! status: ${res.status}`);
+//     }
+
+//     return await res.json();
+//   } catch (error) {
+//     console.error("Error in sendFormData:", error);
+//     throw error;
+//   }
+// }
+
+export async function sendFormData(data: FormData) {
+  try {
+    console.log("sendFormData.data:");
+
+    const entries = Array.from(data.entries());
+    for (const [key, value] of entries) {
+      console.log(`  ${key}:`, value);
+    }
+
+    const formData = new FormData();
+
+    // Map the form data fields
+    const fieldMappings: { key: string; value: string | boolean | number }[] = [
+      { key: "fullName", value: data.get("username") },
+      { key: "RegNo", value: data.get("regNo") },
+      { key: "customerAge", value: calculateAge(new Date(data.get("date"))) }, // Assuming a helper function
+      { key: "customerAddress", value: data.get("address") },
+      { key: "countyCode", value: "496" }, // Static value
+      { key: "mobileNumber", value: data.get("phoneNumber") },
+      { key: "emailAddress", value: data.get("email") },
+      { key: "hasAccBogd", value: data.get("hasBankAccount") ? 'YES' : 'NO' },
+      { key: "promoCode", value: data.get("promoCode") ?? "123" },
+      { key: "productCode", value: data.get("productCode") },
+      { key: "branchCode", value: data.get("branch") },
+      { key: "paymentDescription", value: data.get("verification") || "description" },
+    ];
+
+    // Append text fields to FormData
+    fieldMappings.forEach(({ key, value }) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value)); // Convert all values to strings
+      }
+    });
+
+    // Append files to FormData
+    const file = data.get("file");
+
+    if (file) {
+      if (file instanceof File) {
+        // Single file case
+        formData.append("file", file);
+      } else if (Array.isArray(file)) {
+        // Multiple files case (if the file input allows multiple)
+        file.forEach((f: File) => {
+          formData.append("file", f);
+        });
+      }
+    }
+
+    console.log("formData:", formData);
+
+    // Send the POST request
+    const res = await fetch(
+      "http://middleware.bogd.mn:9191/api-gateway/info/signup/save",
+      {
+        method: "POST",
+        body: formData, // Send the formData directly
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in sendFormData:", error);
+    throw error;
+  }
+}
+
 

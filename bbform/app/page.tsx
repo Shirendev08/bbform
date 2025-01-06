@@ -31,16 +31,18 @@ export default function Home() {
       <div className="relative w-full bg-black">
     <div className="absolute inset-0 bg-green-300  hidden lg:block">
       <video autoPlay muted loop playsInline className="w-full h-full object-cover" poster="images/poster.jpg">
-        <source src="assets/intro/intro/compass 3d cards Landscape render 2.mp4" type="video/mp4" />
+        <source src="assets/intro/intro/miya.mp4" type="video/mp4" />
       </video>
     </div>
     <div className="container mx-auto px-6 lg:px-12 relative">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="mx-auto lg:mx-0 order-1 lg:order-0">
-          <img src="images/top-logos.svg" alt="top logo" className="mt-12 lg:mt-32 mb-14" />
+          <img src="assets/logo.svg" alt="top logo" className="mt-12 lg:mt-32 mb-[-330px]" />
+          {/* <img src="images/top-logos.svg" alt="top logo" className="mt-12 lg:mt-32 mb-14" /> */}
           <div className="inline-block relative">
-            <img src="images/compass.svg" alt="compass" className="max-w-full" />
-            <img src="images/a.svg" alt="a" className="absolute -top-4 right-1/4 compass-rotate" />
+            {/* <img src="images/compass.svg" alt="compass" className="max-w-full" /> */}
+            <p className="text-7xl text-white font-bold">Mobile Legends Card</p>
+            {/* <img src="images/a.svg" alt="a" className="absolute -top-4 right-1/4 compass-rotate" /> */}
           </div>
           <div className="font-golos max-w-sm text-white font-medium py-6">
             Залуус өөрсдийн тодорхойлсон зорилгынхоо төлөө хөдөлмөрлөж байгаа
@@ -58,7 +60,7 @@ export default function Home() {
               </div>
             </a>
             <div className="flex text-white/50 text-opacity-50 text-xs my-5 gap-2 place-content-center">
-              <a href="#">by TsoilogsoZ & Bogd Bank</a>
+              <a href="#">by Mobile Legend Bang Bang & Bogd Bank</a>
               <span>/</span>
               <a href="#">Карт захиалах</a>
             </div>
@@ -67,7 +69,7 @@ export default function Home() {
         <div className="order-0 lg:order-1">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover block lg:hidden"
             poster="/images/poster_sm.jpg">
-            <source src="/assets/intro/intro/compass 3d cards 1x1 render 2.mp4" type="video/mp4" />
+            <source src="/assets/intro/intro/miya.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -108,8 +110,8 @@ export default function Home() {
       </div>
 
     </div>
-      <MarqueeSlider images={images}/>
-      <EventMarquee/>
+      {/* <MarqueeSlider images={images}/>
+      <EventMarquee/> */}
       </div>
     
    </div>
